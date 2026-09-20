@@ -547,7 +547,10 @@ function FrontFace({
 }) {
   return (
     <div className="relative z-[1] grid h-full min-h-0 grid-cols-[0.86fr_1.34fr] grid-rows-[minmax(0,1fr)_auto_auto] gap-x-2 gap-y-0.5 overflow-hidden px-2.5 pb-2 pt-2 sm:gap-x-2.5 sm:px-3 sm:pb-2.5 sm:pt-2.5">
-      {/* Foto — linha 1 */}
+      {config.brandStickerEnabled && (
+        <BrandSticker className="pointer-events-none absolute right-2.5 top-2 z-[3] h-8 w-8 sm:right-3 sm:top-2.5 sm:h-9 sm:w-9" />
+      )}
+
       <div className="relative row-start-1 min-h-0 w-full overflow-hidden rounded-[1px] bg-[#1e4a7a] ring-1 ring-black/30">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -569,26 +572,20 @@ function FrontFace({
         )}
       </div>
 
-      {/* Coluna direita topo — alinhada à foto */}
       <div className="relative row-start-1 flex min-h-0 min-w-0 flex-col overflow-hidden">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0 flex-1">
-            {config.wordmarkEnabled && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src="/stickers/nb-wordmark.png?v=3"
-                alt="Nerds Brasil"
-                className="h-11 w-auto max-w-full object-contain object-left sm:h-12"
-                draggable={false}
-              />
-            )}
-            <p className="mt-0.5 text-[7px] font-semibold uppercase tracking-[0.14em] text-[#1a4f8c]/75">
-              Carteira de membro / Member card
-            </p>
-          </div>
-          {config.brandStickerEnabled && (
-            <BrandSticker className="h-8 w-8 shrink-0 sm:h-9 sm:w-9" />
+        <div className="min-w-0">
+          {config.wordmarkEnabled && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src="/stickers/nb-wordmark.png?v=3"
+              alt="Nerds Brasil"
+              className="h-11 w-auto max-w-full object-contain object-left sm:h-12"
+              draggable={false}
+            />
           )}
+          <p className="mt-0.5 text-[7px] font-semibold uppercase tracking-[0.14em] text-[#1a4f8c]/75">
+            Carteira de membro / Member card
+          </p>
         </div>
 
         <p className="mt-1.5 font-mono text-[12px] font-bold tracking-wide text-[#a3182d] sm:text-[13px]">

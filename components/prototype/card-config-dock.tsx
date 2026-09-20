@@ -237,19 +237,41 @@ function PhotoUpload({
           <>
             <svg
               viewBox="0 0 24 24"
-              className="size-7 text-white/45"
+              className="size-7 text-white/40"
               fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
               aria-hidden
             >
-              <rect x="3" y="3" width="18" height="18" rx="3" />
-              <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none" />
-              <path d="M3 16l5-5 4 4 3-3 6 6" />
-              <circle cx="18.5" cy="18.5" r="3.2" fill="#141414" stroke="currentColor" />
-              <path d="M18.5 17v3M17 18.5h3" />
+              <rect
+                x="2.75"
+                y="4.75"
+                width="18.5"
+                height="14.5"
+                rx="2.25"
+                stroke="currentColor"
+                strokeWidth="1.4"
+              />
+              <circle cx="8.25" cy="9.25" r="1.35" fill="currentColor" />
+              <path
+                d="M3.5 16.5l4.2-4.2 2.8 2.8 3.1-3.1 6.4 5.5"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="18.25" cy="17.25" r="3.35" fill="#141414" />
+              <circle
+                cx="18.25"
+                cy="17.25"
+                r="3.1"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+              <path
+                d="M18.25 15.6v3.3M16.6 17.25h3.3"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
             </svg>
             <span className="text-[13px] font-medium text-white/90">
               Upload artwork
