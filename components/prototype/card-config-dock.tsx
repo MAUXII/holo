@@ -153,6 +153,7 @@ function PhotoUpload({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
 
   const onFile = (file: File | undefined) => {
     setError(null);
@@ -179,49 +180,98 @@ function PhotoUpload({
 
   return (
     <Section title="Photo">
-      <div className="flex items-center gap-3">
-        <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-white/5 ring-1 ring-white/10">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={avatarUrl}
-            alt=""
-            className="h-full w-full object-cover object-top"
-            draggable={false}
-          />
-        </div>
-        <div className="min-w-0 flex-1 space-y-1.5">
-          <input
-            ref={inputRef}
-            type="file"
-            accept={AVATAR_ACCEPT}
-            className="sr-only"
-            onChange={(e) => {
-              onFile(e.target.files?.[0]);
-              e.target.value = "";
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            className="w-full rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-[11px] text-white/75 transition hover:bg-white/[0.08]"
-          >
-            Upload photo
-          </button>
-          {isCustom && (
-            <button
-              type="button"
-              onClick={() => {
-                setError(null);
-                onAvatarChange(null);
-              }}
-              className="w-full rounded-lg px-2.5 py-1 text-[10px] text-white/40 transition hover:text-white/70"
+      <input
+        ref={inputRef}
+        type="file"
+        accept={AVATAR_ACCEPT}
+        className="sr-only"
+        onChange={(e) => {
+          onFile(e.target.files?.[0]);
+          e.target.value = "";
+        }}
+      />
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        onDragEnter={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          setDragging(false);
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragging(false);
+          onFile(e.dataTransfer.files?.[0]);
+        }}
+        className={cn(
+          "relative flex w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl border border-dashed px-4 py-7 transition",
+          dragging
+            ? "border-white/40 bg-white/[0.06]"
+            : "border-white/20 bg-transparent hover:border-white/30 hover:bg-white/[0.02]",
+        )}
+      >
+        {isCustom ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={avatarUrl}
+              alt=""
+              className="h-16 w-16 rounded-lg object-cover object-top ring-1 ring-white/15"
+              draggable={false}
+            />
+            <span className="text-[13px] font-medium text-white/90">
+              Replace artwork
+            </span>
+            <span className="text-[11px] text-white/40">
+              Drop or click · SVG, PNG, JPG, WebP
+            </span>
+          </>
+        ) : (
+          <>
+            <svg
+              viewBox="0 0 24 24"
+              className="size-7 text-white/45"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
             >
-              Usar padrão
-            </button>
-          )}
-        </div>
-      </div>
-      <p className="text-[10px] text-white/30">PNG, JPG, WebP, SVG · até 4 MB</p>
+              <rect x="3" y="3" width="18" height="18" rx="3" />
+              <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none" />
+              <path d="M3 16l5-5 4 4 3-3 6 6" />
+              <circle cx="18.5" cy="18.5" r="3.2" fill="#141414" stroke="currentColor" />
+              <path d="M18.5 17v3M17 18.5h3" />
+            </svg>
+            <span className="text-[13px] font-medium text-white/90">
+              Upload artwork
+            </span>
+            <span className="text-[11px] text-white/40">
+              Drop or click · SVG, PNG, JPG, WebP
+            </span>
+          </>
+        )}
+      </button>
+      {isCustom && (
+        <button
+          type="button"
+          onClick={() => {
+            setError(null);
+            onAvatarChange(null);
+          }}
+          className="w-full text-center text-[10px] text-white/40 transition hover:text-white/70"
+        >
+          Usar padrão
+        </button>
+      )}
       {error && <p className="text-[10px] text-red-300/80">{error}</p>}
     </Section>
   );
@@ -239,7 +289,7 @@ export function CardConfigDock({
   return (
     <aside
       className={cn(
-        "flex h-full max-h-full min-h-0 w-full max-w-[300px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#141414]/92 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-md",
+        "flex h-full max-h-full min-h-0 w-full max-w-[340px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#141414]/92 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-md",
         className,
       )}
     >

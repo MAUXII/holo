@@ -244,7 +244,7 @@ export function MemberCardShowcase({ member }: Props) {
         </div>
       </header>
 
-      <div className="absolute bottom-4 left-4 top-4 z-20 hidden w-[300px] md:flex sm:bottom-6 sm:left-6 sm:top-6">
+      <div className="absolute bottom-4 left-4 top-4 z-20 hidden w-[340px] md:flex sm:bottom-6 sm:left-6 sm:top-6">
         {configReady && (
           <CardConfigDock
             {...dockProps}
@@ -253,7 +253,7 @@ export function MemberCardShowcase({ member }: Props) {
         )}
       </div>
 
-      <div className="relative z-[1] flex min-h-0 flex-1 items-center justify-center overflow-hidden px-4 pb-28 pt-4 md:pb-4 md:pl-[calc(1.5rem+300px+1.5rem)] md:pr-6">
+      <div className="relative z-[1] flex min-h-0 flex-1 items-center justify-center overflow-hidden px-4 pb-28 pt-4 md:pb-4 md:pl-[calc(1.5rem+340px+1.5rem)] md:pr-6">
         <div ref={captureRef} className="w-full max-w-[560px]">
           <MemberLicenseCard
             member={displayMember}
