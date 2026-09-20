@@ -91,6 +91,12 @@ export function MemberCardShowcase({ member }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [config, setConfig] = useState<CardVisualConfig>(DEFAULT_CARD_CONFIG);
   const [configReady, setConfigReady] = useState(false);
+  const [customAvatar, setCustomAvatar] = useState<string | null>(null);
+
+  const displayMember = {
+    ...member,
+    avatarUrl: customAvatar ?? member.avatarUrl,
+  };
 
   useEffect(() => {
     setConfig(loadCardConfig());
@@ -108,6 +114,7 @@ export function MemberCardShowcase({ member }: Props) {
   const resetConfig = useCallback(() => {
     setConfig(DEFAULT_CARD_CONFIG);
     saveCardConfig(DEFAULT_CARD_CONFIG);
+    setCustomAvatar(null);
   }, []);
 
   useEffect(() => {
@@ -157,6 +164,15 @@ export function MemberCardShowcase({ member }: Props) {
     },
     [exporting, member.id],
   );
+
+  const dockProps = {
+    config,
+    onChange: patchConfig,
+    onReset: resetConfig,
+    avatarUrl: displayMember.avatarUrl,
+    defaultAvatarUrl: member.avatarUrl,
+    onAvatarChange: setCustomAvatar,
+  };
 
   return (
     <div className="relative flex h-dvh max-h-dvh flex-1 flex-col overflow-hidden bg-[#0c0c0c]">
@@ -228,13 +244,10 @@ export function MemberCardShowcase({ member }: Props) {
         </div>
       </header>
 
-      {/* Dock: mesmo respiro left = top = bottom */}
       <div className="absolute bottom-4 left-4 top-4 z-20 hidden w-[300px] md:flex sm:bottom-6 sm:left-6 sm:top-6">
         {configReady && (
           <CardConfigDock
-            config={config}
-            onChange={patchConfig}
-            onReset={resetConfig}
+            {...dockProps}
             className="h-full w-full max-w-none"
           />
         )}
@@ -243,7 +256,7 @@ export function MemberCardShowcase({ member }: Props) {
       <div className="relative z-[1] flex min-h-0 flex-1 items-center justify-center overflow-hidden px-4 pb-28 pt-4 md:pb-4 md:pl-[calc(1.5rem+300px+1.5rem)] md:pr-6">
         <div ref={captureRef} className="w-full max-w-[560px]">
           <MemberLicenseCard
-            member={member}
+            member={displayMember}
             showcase
             config={configReady ? config : DEFAULT_CARD_CONFIG}
           />
@@ -252,12 +265,7 @@ export function MemberCardShowcase({ member }: Props) {
 
       <div className="fixed inset-x-3 bottom-3 z-20 max-h-[42dvh] md:hidden">
         {configReady && (
-          <CardConfigDock
-            config={config}
-            onChange={patchConfig}
-            onReset={resetConfig}
-            className="max-h-[42dvh]"
-          />
+          <CardConfigDock {...dockProps} className="max-h-[42dvh]" />
         )}
       </div>
 

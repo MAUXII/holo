@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import type { CardVisualConfig } from "@/lib/prototype/card-config";
 import {
   DEFAULT_CARD_CONFIG,
@@ -10,10 +11,16 @@ import {
 } from "@/lib/prototype/card-config";
 import { cn } from "@/lib/utils";
 
+const AVATAR_ACCEPT = "image/png,image/jpeg,image/webp,image/svg+xml,.png,.jpg,.jpeg,.webp,.svg";
+const AVATAR_MAX_BYTES = 4 * 1024 * 1024;
+
 type Props = {
   config: CardVisualConfig;
   onChange: (patch: Partial<CardVisualConfig>) => void;
   onReset: () => void;
+  avatarUrl: string;
+  defaultAvatarUrl: string;
+  onAvatarChange: (dataUrl: string | null) => void;
   className?: string;
 };
 
@@ -135,7 +142,100 @@ function Toggle({
   );
 }
 
-export function CardConfigDock({ config, onChange, onReset, className }: Props) {
+function PhotoUpload({
+  avatarUrl,
+  isCustom,
+  onAvatarChange,
+}: {
+  avatarUrl: string;
+  isCustom: boolean;
+  onAvatarChange: (dataUrl: string | null) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const onFile = (file: File | undefined) => {
+    setError(null);
+    if (!file) return;
+    const okType =
+      /^image\/(png|jpeg|webp|svg\+xml)$/.test(file.type) ||
+      /\.(png|jpe?g|webp|svg)$/i.test(file.name);
+    if (!okType) {
+      setError("PNG, JPG, WebP ou SVG");
+      return;
+    }
+    if (file.size > AVATAR_MAX_BYTES) {
+      setError("Máx. 4 MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === "string") onAvatarChange(result);
+    };
+    reader.onerror = () => setError("Falha ao ler o arquivo");
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <Section title="Photo">
+      <div className="flex items-center gap-3">
+        <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-white/5 ring-1 ring-white/10">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={avatarUrl}
+            alt=""
+            className="h-full w-full object-cover object-top"
+            draggable={false}
+          />
+        </div>
+        <div className="min-w-0 flex-1 space-y-1.5">
+          <input
+            ref={inputRef}
+            type="file"
+            accept={AVATAR_ACCEPT}
+            className="sr-only"
+            onChange={(e) => {
+              onFile(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="w-full rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-[11px] text-white/75 transition hover:bg-white/[0.08]"
+          >
+            Upload photo
+          </button>
+          {isCustom && (
+            <button
+              type="button"
+              onClick={() => {
+                setError(null);
+                onAvatarChange(null);
+              }}
+              className="w-full rounded-lg px-2.5 py-1 text-[10px] text-white/40 transition hover:text-white/70"
+            >
+              Usar padrão
+            </button>
+          )}
+        </div>
+      </div>
+      <p className="text-[10px] text-white/30">PNG, JPG, WebP, SVG · até 4 MB</p>
+      {error && <p className="text-[10px] text-red-300/80">{error}</p>}
+    </Section>
+  );
+}
+
+export function CardConfigDock({
+  config,
+  onChange,
+  onReset,
+  avatarUrl,
+  defaultAvatarUrl,
+  onAvatarChange,
+  className,
+}: Props) {
   return (
     <aside
       className={cn(
@@ -158,6 +258,11 @@ export function CardConfigDock({ config, onChange, onReset, className }: Props) 
       </div>
 
       <div className="card-dock-scroll min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain px-4 py-4">
+        <PhotoUpload
+          avatarUrl={avatarUrl}
+          isCustom={avatarUrl !== defaultAvatarUrl}
+          onAvatarChange={onAvatarChange}
+        />
         <Section title="Finish">
           <ChipGroup
             value={config.finish}
